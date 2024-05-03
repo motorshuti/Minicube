@@ -1,37 +1,35 @@
----
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: nodejs-app
-  namespace: default
+  name: test-dep
   labels:
-    app: nodejs-app
+    app: demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nodejs-app
+      app: demo
   template:
     metadata:
       labels:
-        app: nodejs-app
+        app: demo
     spec:
       containers:
-      - name: nodejs-app
-        image: "devopshint/node-app:latest"
+      - name: demo
+        image: devopshint/node-app:latest
         ports:
-          - containerPort: 3000
+        - containerPort: {testPort}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nodejs-app
-  namespace: default
+  name: demo-k8s-service
 spec:
   selector:
-    app: nodejs-app
-  type: NodePort
+    app: demo
+  type: LoadBalancer
   ports:
-  - name: http
-    targetPort: 3000
-    port: 80
+  - protocol: TCP
+    port: {testPort}
+    targetPort: {testPort}
+    nodePort: {testNodePort}
